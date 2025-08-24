@@ -3,16 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Flickr Signage Slideshow — Clean</title>
+  <title>Flickr Signage Slideshow — Stylish</title>
   <style>
     :root {
       --bg: #000;
       --gap: 16px;
       --slide-duration: 12s;
       --row-target: 320px;
+      --accent: #ff0084; /* Flickr pink */
     }
     * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; background: var(--bg); overflow: hidden; }
+    html, body { height: 100%; margin: 0; background: var(--bg); overflow: hidden; font-family: sans-serif; color: white; }
 
     .stage {
       position: fixed;
@@ -21,9 +22,10 @@
       display: grid;
       place-items: center;
     }
+
     .slide {
       position: absolute;
-      inset: 24px;
+      inset: 24px 24px 100px 24px; /* leave room for footer */
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -31,9 +33,7 @@
       opacity: 0;
       transition: opacity 900ms ease;
     }
-    .slide.active {
-      opacity: 1;
-    }
+    .slide.active { opacity: 1; }
 
     .row {
       width: 100%;
@@ -61,10 +61,45 @@
     @keyframes popin {
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
+
+    /* Footer banner */
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100px;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      border-top: 2px solid var(--accent);
+    }
+    .footer-text {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .footer-text span {
+      color: var(--accent);
+    }
+    .footer-qr img {
+      height: 80px;
+      width: 80px;
+    }
   </style>
 </head>
 <body>
   <div class="stage" id="stage"></div>
+
+  <!-- Footer with QR -->
+  <div class="footer">
+    <div class="footer-text">Find photos on <span>Flickr</span></div>
+    <div class="footer-qr">
+      <!-- You can swap this QR code with one generated for your Flickr URL -->
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.flickr.com/photos/sulamitachurchpdx" alt="Flickr QR Code">
+    </div>
+  </div>
 
   <script>
     const CONFIG = {
@@ -210,7 +245,7 @@
       photos = photos.map(bestImage).filter(Boolean);
 
       const containerWidth = stage.clientWidth - 48;
-      const containerHeight = stage.clientHeight - 48;
+      const containerHeight = stage.clientHeight - 148; // adjust for footer
       const rows = buildJustifiedRows(photos, containerWidth, CONFIG.targetRowHeight, CONFIG.gap);
       const slidesRows = paginateRowsToSlides(rows, containerHeight, CONFIG.gap);
 
